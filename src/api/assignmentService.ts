@@ -161,14 +161,17 @@ export const fetchAssignmentDetail = async (requestData: FetchAssignmentDetailDa
 };
 
 /**
- * Fetch detailed information for multiple assignments
+ * Fetch detailed information for multiple assignments with progress tracking
  */
 export const fetchMultipleAssignmentDetails = async (
   apiKey: string,
   baseUrl: string,
-  assignments: Assignment[]
+  assignments: Assignment[],
+  onProgress?: (completed: number, total: number) => void
 ): Promise<DetailedAssignment[]> => {
   const detailedAssignments: DetailedAssignment[] = [];
+  const totalAssignments = assignments.length;
+  let completedAssignments = 0;
   
   // Process assignments in batches to avoid overwhelming the server
   const batchSize = 5;
@@ -192,6 +195,12 @@ export const fetchMultipleAssignmentDetails = async (
           detailedAssignments.push(result.data);
         } else {
           console.warn(`Failed to fetch details for assignment ${batch[index].id}:`, result.error);
+        }
+        
+        // Update progress for each completed assignment
+        completedAssignments++;
+        if (onProgress) {
+          onProgress(completedAssignments, totalAssignments);
         }
       });
       

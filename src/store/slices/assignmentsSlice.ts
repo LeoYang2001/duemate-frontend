@@ -102,22 +102,25 @@ export const fetchAssignments = createAsyncThunk(
   }
 );
 
-// Async thunk for fetching detailed assignment information
+// Async thunk for fetching detailed assignment information with progress
 export const fetchAssignmentDetails = createAsyncThunk(
   'assignments/fetchAssignmentDetails',
   async ({ 
     apiKey, 
     baseUrl, 
-    assignments 
+    assignments,
+    onProgress
   }: { 
     apiKey: string; 
     baseUrl: string; 
     assignments: Assignment[];
+    onProgress?: (completed: number, total: number) => void;
   }) => {
     const detailedAssignments = await fetchMultipleAssignmentDetails(
       apiKey,
       baseUrl,
-      assignments
+      assignments,
+      onProgress
     );
     
     return detailedAssignments;

@@ -52,7 +52,7 @@ export const useAssignmentFetcher = () => {
       // Set loading state
       dispatch(setGlobalLoading({ 
         loading: true, 
-        message: `Loading assignments for ${selectedSemester}...` 
+        message: `Loading assignments for ${selectedSemester}... ` 
       }));
 
       // Fetch assignments for current courses and semester
@@ -66,7 +66,8 @@ export const useAssignmentFetcher = () => {
       .unwrap()
       .then(() => {
         console.log('Assignment fetching completed for', selectedSemester);
-        dispatch(setGlobalLoading({ loading: false }));
+        // Don't clear loading here - let the details fetching handle it
+        // dispatch(setGlobalLoading({ loading: false }));
       })
       .catch((error: any) => {
         console.error('Assignment fetching failed:', error);
@@ -104,26 +105,36 @@ export const useAssignmentFetcher = () => {
     ) {
       console.log('Fetching assignment details for', assignments.length, 'assignments...');
       
-      // Set loading state with special message for details
-      dispatch(setGlobalLoading({ 
-        loading: true, 
-        message: 'Loading assignment details...' 
-      }));
+      // Add a small delay to ensure the loading message is visible
+      setTimeout(() => {
+        // Set initial loading state with progress
+        dispatch(setGlobalLoading({ 
+          loading: true, 
+          message: `Loading assignment details... 0/${assignments.length}` 
+        }));
 
-      dispatch(fetchAssignmentDetails({
-        apiKey: user.canvasApiKey,
-        baseUrl: schoolUrlKey,
-        assignments: assignments,
-      }))
-      .unwrap()
-      .then(() => {
-        console.log('Assignment details fetching completed');
-        dispatch(setGlobalLoading({ loading: false }));
-      })
-      .catch((error: any) => {
-        console.error('Assignment details fetching failed:', error);
-        dispatch(setGlobalLoading({ loading: false }));
-      });
+        dispatch(fetchAssignmentDetails({
+          apiKey: user.canvasApiKey,
+          baseUrl: schoolUrlKey,
+          assignments: assignments,
+          onProgress: (completed: number, total: number) => {
+            // Update loading message with progress
+            dispatch(setGlobalLoading({ 
+              loading: true, 
+              message: `Loading assignment details... ${completed}/${total}` 
+            }));
+          }
+        }))
+        .unwrap()
+        .then(() => {
+          console.log('Assignment details fetching completed');
+          dispatch(setGlobalLoading({ loading: false }));
+        })
+        .catch((error: any) => {
+          console.error('Assignment details fetching failed:', error);
+          dispatch(setGlobalLoading({ loading: false }));
+        });
+      }, 100); // 100ms delay to ensure loading message shows
     }
   }, [
     isAuthenticated,
