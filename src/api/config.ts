@@ -1,0 +1,10 @@
+// API configuration
+export const API_CONFIG = {
+  BASE_URL: 'http://localhost:3000',
+  ENDPOINTS: {
+    USERS: '/api/users',
+    USER_BY_EMAIL: (email: string) => `/api/users/email/${email}`,
+  },
+} as const;
+
+export default API_CONFIG;
