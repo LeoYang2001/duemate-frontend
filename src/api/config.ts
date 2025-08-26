@@ -5,6 +5,7 @@ export const API_CONFIG = {
     USERS: '/api/users',
     USER_BY_EMAIL: (email: string) => `/api/users/email/${email}`,
     ASSIGNMENTS: '/api/assignments/db',
+    ASSIGNMENT_DETAIL: '/api/assignments/detail',
   },
 } as const;
 

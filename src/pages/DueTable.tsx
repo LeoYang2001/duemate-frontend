@@ -4,7 +4,8 @@ import { LoadingSkeleton } from '../components/LoadingComponents';
 function DueTable() {
   const { isLoading: coursesLoading } = useAppSelector((state: any) => state.courses);
   const { isGlobalLoading } = useAppSelector((state: any) => state.ui);
-  const selectedSemester = localStorage.getItem('selectedSemester') || '';
+  // Get selectedSemester from Redux global state instead of localStorage
+  const selectedSemester = useAppSelector((state: any) => state.ui.selectedSemester);
 
   // Show skeleton while courses are loading for new users
   if (coursesLoading || isGlobalLoading) {

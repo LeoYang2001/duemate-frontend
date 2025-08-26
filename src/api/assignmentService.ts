@@ -13,12 +13,35 @@ export interface Assignment {
   workflow_state: string;
 }
 
+// Types for detailed assignment data
+export interface DetailedAssignment {
+  assignment_id: number;
+  user_id: number;
+  submission_type: string;
+  submitted_at: string;
+  score: number;
+  grade: string;
+  late: boolean;
+  workflow_state: string;
+  submission_comments: {
+    comment: string;
+    created_at: string;
+  }[];
+}
+
 export interface FetchAssignmentsData {
   apiKey: string;
   baseUrl: string;
   courseIds: string[];
   email: string;
   term: string; // Added term parameter
+}
+
+export interface FetchAssignmentDetailData {
+  apiKey: string;
+  baseUrl: string;
+  courseId: string;
+  assignmentId: string;
 }
 
 // API response types
@@ -98,4 +121,88 @@ export const getAssignmentsByCourses = async (
  */
 export const extractCourseIds = (courses: { id: string }[]): string[] => {
   return courses.map(course => course.id);
+};
+
+/**
+ * Fetch detailed assignment information for a specific assignment
+ */
+export const fetchAssignmentDetail = async (requestData: FetchAssignmentDetailData): Promise<AssignmentApiResponse<DetailedAssignment>> => {
+  try {
+    const { apiKey, baseUrl, courseId, assignmentId } = requestData;
+    const url = `${API_CONFIG.BASE_URL}/api/assignments/detail?apiKey=${apiKey}&baseUrl=${encodeURIComponent(baseUrl)}&courseId=${courseId}&assignmentId=${assignmentId}`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: data.error || `HTTP error! status: ${response.status}`,
+      };
+    }
+
+    return {
+      success: true,
+      data: data,
+    };
+  } catch (error) {
+    console.error('Error fetching assignment detail:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+    };
+  }
+};
+
+/**
+ * Fetch detailed information for multiple assignments
+ */
+export const fetchMultipleAssignmentDetails = async (
+  apiKey: string,
+  baseUrl: string,
+  assignments: Assignment[]
+): Promise<DetailedAssignment[]> => {
+  const detailedAssignments: DetailedAssignment[] = [];
+  
+  // Process assignments in batches to avoid overwhelming the server
+  const batchSize = 5;
+  for (let i = 0; i < assignments.length; i += batchSize) {
+    const batch = assignments.slice(i, i + batchSize);
+    
+    const batchPromises = batch.map(assignment => 
+      fetchAssignmentDetail({
+        apiKey,
+        baseUrl,
+        courseId: assignment.course_id,
+        assignmentId: assignment.id,
+      })
+    );
+    
+    try {
+      const batchResults = await Promise.all(batchPromises);
+      
+      batchResults.forEach((result, index) => {
+        if (result.success && result.data) {
+          detailedAssignments.push(result.data);
+        } else {
+          console.warn(`Failed to fetch details for assignment ${batch[index].id}:`, result.error);
+        }
+      });
+      
+      // Small delay between batches to be nice to the server
+      if (i + batchSize < assignments.length) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    } catch (error) {
+      console.error('Error processing batch:', error);
+    }
+  }
+  
+  return detailedAssignments;
 };

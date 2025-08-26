@@ -16,6 +16,22 @@ export const selectAssignmentsState = (state: RootState) => state.assignments;
 // Selector for current assignments (all assignments from the store)
 export const selectCurrentAssignments = (state: RootState) => state.assignments.assignments;
 
+// Selector for detailed assignments
+export const selectDetailedAssignments = (state: RootState) => state.assignments.detailedAssignments;
+
+// Selector for combined assignments list
+export const selectCombinedAssignmentsList = (state: RootState) => state.assignments.combinedAssignmentsList;
+
+// Selector for assignment loading states
+export const selectAssignmentLoadingStates = createSelector(
+  [selectAssignmentsState],
+  (assignmentsState) => ({
+    isLoadingAssignments: assignmentsState.isLoading,
+    isLoadingDetails: assignmentsState.isLoadingDetails,
+    hasDetailsFetched: assignmentsState.hasDetailsFetched,
+  })
+);
+
 // Selector for basic course state
 export const selectCoursesState = (state: RootState) => state.courses;
 

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { fetchAssignments, clearAssignments } from '../store/slices/assignmentsSlice';
+import { fetchAssignments, fetchAssignmentDetails, clearAssignments } from '../store/slices/assignmentsSlice';
 import { selectCurrentCourseList } from '../store/selectors';
 import { setGlobalLoading } from '../store/slices/uiSlice';
 
@@ -12,7 +12,14 @@ export const useAssignmentFetcher = () => {
   const { isAuthenticated, user, schoolUrlKey } = useAppSelector(state => state.auth);
   const { selectedSemester } = useAppSelector(state => state.ui);
   const currentCourseList = useAppSelector(selectCurrentCourseList);
-  const { isLoading: assignmentsLoading, lastFetchedTerm, hasFetched } = useAppSelector(state => state.assignments);
+  const { 
+    assignments,
+    isLoading: assignmentsLoading, 
+    isLoadingDetails: detailsLoading,
+    lastFetchedTerm, 
+    hasFetched,
+    hasDetailsFetched 
+  } = useAppSelector(state => state.assignments);
   const { hasFetched: coursesHasFetched } = useAppSelector(state => state.courses);
 
   useEffect(() => {
@@ -76,6 +83,56 @@ export const useAssignmentFetcher = () => {
     lastFetchedTerm,
     hasFetched,
     assignmentsLoading,
+    dispatch
+  ]);
+
+  // Second useEffect: Fetch assignment details after assignments are loaded
+  useEffect(() => {
+    // Only fetch details if:
+    // 1. User is authenticated
+    // 2. We have assignments
+    // 3. We haven't fetched details yet for this set of assignments
+    // 4. Not currently loading details
+    if (
+      isAuthenticated &&
+      user &&
+      schoolUrlKey &&
+      assignments.length > 0 &&
+      !hasDetailsFetched &&
+      !detailsLoading &&
+      hasFetched
+    ) {
+      console.log('Fetching assignment details for', assignments.length, 'assignments...');
+      
+      // Set loading state with special message for details
+      dispatch(setGlobalLoading({ 
+        loading: true, 
+        message: 'Loading assignment details...' 
+      }));
+
+      dispatch(fetchAssignmentDetails({
+        apiKey: user.canvasApiKey,
+        baseUrl: schoolUrlKey,
+        assignments: assignments,
+      }))
+      .unwrap()
+      .then(() => {
+        console.log('Assignment details fetching completed');
+        dispatch(setGlobalLoading({ loading: false }));
+      })
+      .catch((error: any) => {
+        console.error('Assignment details fetching failed:', error);
+        dispatch(setGlobalLoading({ loading: false }));
+      });
+    }
+  }, [
+    isAuthenticated,
+    user,
+    schoolUrlKey,
+    assignments,
+    hasDetailsFetched,
+    detailsLoading,
+    hasFetched,
     dispatch
   ]);
 };
