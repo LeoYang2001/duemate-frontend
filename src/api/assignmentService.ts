@@ -24,6 +24,7 @@ export interface DetailedAssignment {
   late: boolean;
   missing: boolean;
   workflow_state: string;
+  ifFinished?: boolean; // Added finished status field
   submission_comments: {
     comment: string;
     created_at: string;
@@ -215,4 +216,47 @@ export const fetchMultipleAssignmentDetails = async (
   }
   
   return detailedAssignments;
+};
+
+// Update assignment finished status
+export interface UpdateAssignmentFinishedData {
+  assignmentId: string;
+  term: string;
+  email: string;
+  ifFinished: boolean;
+}
+
+export const updateAssignmentFinished = async (data: UpdateAssignmentFinishedData): Promise<boolean> => {
+  try {
+    const url = `${API_CONFIG.BASE_URL}/api/assignments/finished`;
+    const payload = {
+      assignmentId: parseInt(data.assignmentId),
+      term: data.term,
+      email: data.email,
+      ifFinished: data.ifFinished,
+    };
+
+
+    
+    console.log('Making API call to:', url);
+    console.log('With payload:', payload);
+    console.log('API_CONFIG.BASE_URL:', API_CONFIG.BASE_URL);
+    
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update assignment: ${response.statusText}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error updating assignment finished status:', error);
+    throw error;
+  }
 };

@@ -15,6 +15,7 @@ interface CombinedAssignment extends Assignment {
   late: boolean;
   missing: boolean;
   workflow_state: string;
+  ifFinished?: boolean; // Changed to match API field name
   submission_comments: {
     comment: string;
     created_at: string;
@@ -158,6 +159,26 @@ const assignmentsSlice = createSlice({
     updateCombinedAssignmentsList: (state) => {
       state.combinedAssignmentsList = getCombinedAssignmentsList(state.assignments, state.detailedAssignments);
     },
+    // Update assignment finished status locally
+    updateAssignmentFinishedStatus: (state, action: PayloadAction<{ assignmentId: string; isFinished: boolean }>) => {
+      const { assignmentId, isFinished } = action.payload;
+      
+      // Update in combinedAssignmentsList
+      const combinedIndex = state.combinedAssignmentsList.findIndex(
+        assignment => assignment.id === assignmentId
+      );
+      if (combinedIndex !== -1) {
+        state.combinedAssignmentsList[combinedIndex].ifFinished = isFinished;
+      }
+      
+      // Update in detailedAssignments array to persist changes
+      const detailedIndex = state.detailedAssignments.findIndex(
+        detail => String(detail.assignment_id) === String(assignmentId)
+      );
+      if (detailedIndex !== -1) {
+        state.detailedAssignments[detailedIndex].ifFinished = isFinished;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -201,7 +222,7 @@ const assignmentsSlice = createSlice({
   },
 });
 
-export const { clearAssignments, setAssignments, clearDetailedAssignments, updateCombinedAssignmentsList } = assignmentsSlice.actions;
+export const { clearAssignments, setAssignments, clearDetailedAssignments, updateCombinedAssignmentsList, updateAssignmentFinishedStatus } = assignmentsSlice.actions;
 export default assignmentsSlice.reducer;
 
 // Export the CombinedAssignment type for use in components

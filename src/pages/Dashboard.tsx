@@ -190,7 +190,7 @@ function Dashboard() {
         )}
         
         {/* Temporary Debug Buttons */}
-        <div className="flex flex-wrap gap-2 mt-4">
+        {/* <div className="flex flex-wrap gap-2 mt-4">
           <button
             onClick={handleLogOverdueAssignments}
             className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 transition-colors"
@@ -205,7 +205,7 @@ function Dashboard() {
           >
             📊 Log All Categories
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Quick Stats Cards */}
