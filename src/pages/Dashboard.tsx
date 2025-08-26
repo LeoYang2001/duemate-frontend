@@ -10,6 +10,9 @@ function Dashboard() {
   const { isLoading: coursesLoading } = useAppSelector((state: any) => state.courses);
   const { isGlobalLoading } = useAppSelector((state: any) => state.ui);
   const currentCourseList = useAppSelector(selectCurrentCourseList);
+  
+  // Get selectedSemester from Redux global state instead of localStorage
+  const selectedSemester = useAppSelector((state: any) => state.ui.selectedSemester);
 
   // Show skeleton while courses are loading for new users
   if (coursesLoading || isGlobalLoading) {
@@ -21,7 +24,6 @@ function Dashboard() {
   }
   
   const currentUser = getCurrentUser();
-  const selectedSemester = localStorage.getItem('selectedSemester') || '';
 
   const handleCourseClick = (course: Course) => {
     console.log('Course clicked:', course);

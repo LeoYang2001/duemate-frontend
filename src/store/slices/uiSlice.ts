@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { getCurrentSemester } from '../../utils';
 
 interface UiState {
   isGlobalLoading: boolean;
@@ -9,11 +8,29 @@ interface UiState {
   selectedSemester: string;
 }
 
+const getCurrentYearFall = (): string => {
+  const currentYear = new Date().getFullYear();
+  return `${currentYear} Fall`;
+};
+
+// Initialize selectedSemester with fallback and save to localStorage
+const initializeSelectedSemester = (): string => {
+  const stored = localStorage.getItem('selectedSemester');
+  if (stored) {
+    return stored;
+  }
+  
+  // If nothing in localStorage, use current year Fall and save it
+  const defaultSemester = getCurrentYearFall();
+  localStorage.setItem('selectedSemester', defaultSemester);
+  return defaultSemester;
+};
+
 const initialState: UiState = {
   isGlobalLoading: false,
   loadingMessage: '',
   showSetupModal: false,
-  selectedSemester: localStorage.getItem('selectedSemester') || getCurrentSemester(),
+  selectedSemester: initializeSelectedSemester(),
 };
 
 const uiSlice = createSlice({

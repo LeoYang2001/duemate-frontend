@@ -10,6 +10,12 @@ export const selectCurrentCourseList = createSelector(
   }
 );
 
+// Selector for assignments state
+export const selectAssignmentsState = (state: RootState) => state.assignments;
+
+// Selector for current assignments (all assignments from the store)
+export const selectCurrentAssignments = (state: RootState) => state.assignments.assignments;
+
 // Selector for basic course state
 export const selectCoursesState = (state: RootState) => state.courses;
 

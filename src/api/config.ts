@@ -4,6 +4,7 @@ export const API_CONFIG = {
   ENDPOINTS: {
     USERS: '/api/users',
     USER_BY_EMAIL: (email: string) => `/api/users/email/${email}`,
+    ASSIGNMENTS: '/api/assignments/db',
   },
 } as const;
 

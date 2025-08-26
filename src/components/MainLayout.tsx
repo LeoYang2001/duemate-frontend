@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { generateSemesterTerms, getCurrentSemester } from '../utils';
+import { generateSemesterTerms } from '../utils';
 import { logout, getCurrentUser } from '../api/authService';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { setLoggedOut } from '../store/slices/authSlice';
 import { clearCourses } from '../store/slices/coursesSlice';
 import { setSelectedSemester } from '../store/slices/uiSlice';
-import { selectCurrentCourseList } from '../store/selectors';
+import { selectCurrentCourseList, selectCurrentAssignments, selectAssignmentsState } from '../store/selectors';
+import { useAssignmentFetcher } from '../hooks/useAssignmentFetcher';
 
 function MainLayout() {
   const navigate = useNavigate();
@@ -14,11 +15,16 @@ function MainLayout() {
   const dispatch = useAppDispatch();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
+  // Use assignment fetcher hook
+  useAssignmentFetcher();
+  
   // Get global Redux state
   const authState = useAppSelector(state => state.auth);
   const coursesState = useAppSelector(state => state.courses);
   const uiState = useAppSelector(state => state.ui);
+  const assignmentsState = useAppSelector(selectAssignmentsState);
   const currentCourseList = useAppSelector(selectCurrentCourseList);
+  const currentAssignments = useAppSelector(selectCurrentAssignments);
   
   // Get selected semester from Redux instead of local state
   const selectedSemester = uiState.selectedSemester;
@@ -60,6 +66,13 @@ function MainLayout() {
     console.log('  - isLoading:', coursesState.isLoading);
     console.log('  - hasFetched:', coursesState.hasFetched);
     console.log('  - error:', coursesState.error);
+    console.log('Assignments State:', assignmentsState);
+    console.log('  - all assignments count:', assignmentsState.assignments?.length || 0);
+    console.log('  - current assignments count:', currentAssignments.length);
+    console.log('  - isLoading:', assignmentsState.isLoading);
+    console.log('  - hasFetched:', assignmentsState.hasFetched);
+    console.log('  - lastFetchedTerm:', assignmentsState.lastFetchedTerm);
+    console.log('  - error:', assignmentsState.error);
     console.log('UI State:', uiState);
     console.log('  - selectedSemester:', uiState.selectedSemester);
     console.log('  - isGlobalLoading:', uiState.isGlobalLoading);
@@ -67,7 +80,9 @@ function MainLayout() {
     console.log('========================');
     console.log('=== COMPUTED VALUES ===');
     console.log('Current Course List (filtered):', currentCourseList);
+    console.log('Current Assignments (filtered):', currentAssignments);
     console.log('All Courses:', coursesState.courses);
+    console.log('All Assignments:', assignmentsState.assignments);
     console.log('Selected Semester:', selectedSemester);
     console.log('========================');
     
