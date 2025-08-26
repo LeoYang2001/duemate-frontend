@@ -13,6 +13,7 @@ interface CombinedAssignment extends Assignment {
   score: number;
   grade: string;
   late: boolean;
+  missing: boolean;
   workflow_state: string;
   submission_comments: {
     comment: string;
