@@ -44,7 +44,6 @@ export const ProgressTestComponent: React.FC = () => {
       <div className="mb-4">
         <p><strong>Loading Assignments:</strong> {loadingStates.isLoadingAssignments ? 'Yes' : 'No'}</p>
         <p><strong>Loading Details:</strong> {loadingStates.isLoadingDetails ? 'Yes' : 'No'}</p>
-        <p><strong>Details Progress:</strong> {loadingStates.detailsProgress.current}/{loadingStates.detailsProgress.total}</p>
         <p><strong>Details Fetched:</strong> {loadingStates.hasDetailsFetched ? 'Yes' : 'No'}</p>
       </div>
 
