@@ -14,6 +14,7 @@ function Dashboard() {
   const currentCourseList = useAppSelector(selectCurrentCourseList);
   const combinedAssignmentsList = useAppSelector(selectCombinedAssignmentsList);
   
+  
   // Get selectedSemester from Redux global state instead of localStorage
   const selectedSemester = useAppSelector((state: any) => state.ui.selectedSemester);
 
