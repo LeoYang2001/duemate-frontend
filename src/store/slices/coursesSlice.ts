@@ -29,9 +29,9 @@ export const fetchCourses = createAsyncThunk(
   'courses/fetchCourses',
   async ({ apiKey, baseUrl }: { apiKey: string; baseUrl: string }) => {
     console.log('Fetching courses with:', { apiKey: apiKey.substring(0, 10) + '...', baseUrl });
-    
-    const response = await fetch(`http://localhost:3000/api/courses?apiKey=${apiKey}&baseUrl=${baseUrl}`);
-    
+
+    const response = await fetch(`https://duemate-backend-production.up.railway.app/api/courses?apiKey=${apiKey}&baseUrl=${baseUrl}`);
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

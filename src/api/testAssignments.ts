@@ -35,8 +35,8 @@ export const testAssignmentsAPIWithTerm = async () => {
 
 // Example of the exact curl command this would generate:
 export const getCurlCommand = () => {
-  const command = `curl -X POST http://localhost:3000/api/assignments/db -H "Content-Type: application/json" -d "{\\"apiKey\\":\\"1139~U6WBuPCryKDx9P2emeCAVCk8DmBuahHAmmXMfBF7C26Byr8WzuzxNTFXmVGXMvEL\\",\\"baseUrl\\":\\"https://uk.instructure.com/api/v1\\",\\"courseIds\\":[\\"2131024\\",\\"2145589\\",\\"2145620\\"],\\"email\\":\\"student@university.edu\\",\\"term\\":\\"2025 Fall\\"}"`;
-  
+  const command = `curl -X POST https://duemate-backend-production.up.railway.app/api/assignments/db -H "Content-Type: application/json" -d "{\\"apiKey\\":\\"1139~U6WBuPCryKDx9P2emeCAVCk8DmBuahHAmmXMfBF7C26Byr8WzuzxNTFXmVGXMvEL\\",\\"baseUrl\\":\\"https://uk.instructure.com/api/v1\\",\\"courseIds\\":[\\"2131024\\",\\"2145589\\",\\"2145620\\"],\\"email\\":\\"student@university.edu\\",\\"term\\":\\"2025 Fall\\"}"`;
+
   console.log('Equivalent curl command:');
   console.log(command);
   return command;

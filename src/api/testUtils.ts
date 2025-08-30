@@ -37,7 +37,7 @@ export const testAPI = {
     console.log('Testing course fetch with:', { apiKey: apiKey.substring(0, 10) + '...', baseUrl });
     
     try {
-      const response = await fetch(`http://localhost:3000/api/courses?apiKey=${apiKey}&baseUrl=${baseUrl}`);
+      const response = await fetch(`https://duemate-backend-production.up.railway.app/api/courses?apiKey=${apiKey}&baseUrl=${baseUrl}`);
       const courses = await response.json();
       console.log('Courses:', courses);
       return courses;

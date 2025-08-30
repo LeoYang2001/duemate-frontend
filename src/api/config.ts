@@ -1,6 +1,6 @@
 // API configuration
 export const API_CONFIG = {
-  BASE_URL: 'http://localhost:3000',
+  BASE_URL: 'https://duemate-backend-production.up.railway.app',
   ENDPOINTS: {
     USERS: '/api/users',
     USER_BY_EMAIL: (email: string) => `/api/users/email/${email}`,
